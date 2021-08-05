@@ -5,10 +5,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("storage")
 public class StorageProperties {
 
-	/**
-	 * Folder location for storing files
-	 */
 	private String location = "upload-dir";
+	private String addonParts = "parts-dir";
+
+	public String getAddonParts() {
+		return addonParts;
+	}
+
+	public void setAddonParts(String addonParts) {
+		this.addonParts = addonParts;
+	}
 
 	public String getLocation() {
 		return location;

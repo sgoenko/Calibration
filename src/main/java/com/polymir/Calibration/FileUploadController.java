@@ -58,7 +58,7 @@ public class FileUploadController {
 
 		storageService.store(file);
 		redirectAttributes.addFlashAttribute("message",
-				"You successfully uploaded " + file.getOriginalFilename() + "!");
+				"Аддон для емкости " + file.getOriginalFilename() + " сформирован.");
 
 		return "redirect:/";
 	}
