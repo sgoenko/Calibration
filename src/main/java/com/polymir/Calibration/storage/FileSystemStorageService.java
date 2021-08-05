@@ -45,41 +45,18 @@ public class FileSystemStorageService implements StorageService {
 			e.printStackTrace();
 		}
 
-		appendHeader(destinationFile);
-		appendParameters(destinationFile);
+		appendPart(destinationFile, "header.L5X", false);
+		appendPart(destinationFile, "parameters.L5X", true);
 		appendLocalTags(destinationFile, graduateTable);
-		appendRoutines(destinationFile);
-		appendFooter(destinationFile);
+		appendPart(destinationFile, "routines.L5X", true);
+		appendPart(destinationFile, "footer.L5X", true);
 
 	}
 
-	private void appendHeader(Path destinationFile) {
-		Path partFile = this.partsLocation.resolve("header.L5X").normalize().toAbsolutePath();
+	private void appendPart(Path destinationFile, String partName, boolean append) {
+		Path partFile = this.partsLocation.resolve(partName).normalize().toAbsolutePath();
 
-		try(FileWriter writer = new FileWriter(destinationFile.toString(), false))
-		{
-			try(FileReader reader = new FileReader(partFile.toString()))
-			{
-				int c;
-				while((c=reader.read())!=-1){
-					writer.write(c);
-				}
-			}
-			catch(IOException ex){
-				System.out.println(ex.getMessage());
-			}
-
-			writer.flush();
-		}
-		catch(IOException ex){
-			System.out.println(ex.getMessage());
-		}
-	}
-
-	private void appendParameters(Path destinationFile) {
-		Path partFile = this.partsLocation.resolve("parameters.L5X").normalize().toAbsolutePath();
-
-		try(FileWriter writer = new FileWriter(destinationFile.toString(), true))
+		try(FileWriter writer = new FileWriter(destinationFile.toString(), append))
 		{
 			try(FileReader reader = new FileReader(partFile.toString()))
 			{
@@ -106,15 +83,18 @@ public class FileSystemStorageService implements StorageService {
 		{
 			writer.write("<LocalTags>\n");
 
-			writer.write("<LocalTag Name=\"table\" DataType=\"REAL\" Dimensions=\"20\" Radix=\"Float\" ExternalAccess=\"None\">\n");
+			writer.write(String.format(
+					"<LocalTag Name=\"table\" DataType=\"REAL\" Dimensions=\"%d\" Radix=\"Float\" ExternalAccess=\"None\">\n",
+					graduateTable.size()));
 			writer.write("<DefaultData Format=\"Decorated\">\n");
-			writer.write("<Array DataType=\"REAL\" Dimensions=\"20\" Radix=\"Float\">\n");
+			writer.write(String.format(
+					"<Array DataType=\"REAL\" Dimensions=\"%d\" Radix=\"Float\">\n",
+					graduateTable.size()));
 
 			for (int i=0; i<graduateTable.size(); i++) {
-				String element = String.format("<Element Index=\"[%d]\" Value=\"%f\"/>\n", i, graduateTable.get(i));
+				String element = String.format("<Element Index=\"[%d]\" Value=\"%s\"/>\n", i, graduateTable.get(i).toString());
 				writer.write(element);
 			}
-			//<Element Index="[0]" Value="2.0"/>
 
 			writer.write("</Array>\n");
 			writer.write("</DefaultData>\n");
@@ -131,52 +111,6 @@ public class FileSystemStorageService implements StorageService {
 				System.out.println(ex.getMessage());
 			}
 			writer.write("</LocalTags>\n");
-
-			writer.flush();
-		}
-		catch(IOException ex){
-			System.out.println(ex.getMessage());
-		}
-	}
-
-	private void appendRoutines(Path destinationFile) {
-		Path partFile = this.partsLocation.resolve("routines.L5X").normalize().toAbsolutePath();
-
-		try(FileWriter writer = new FileWriter(destinationFile.toString(), true))
-		{
-			try(FileReader reader = new FileReader(partFile.toString()))
-			{
-				int c;
-				while((c=reader.read())!=-1){
-					writer.write(c);
-				}
-			}
-			catch(IOException ex){
-				System.out.println(ex.getMessage());
-			}
-
-			writer.flush();
-		}
-		catch(IOException ex){
-			System.out.println(ex.getMessage());
-		}
-	}
-
-	private void appendFooter(Path destinationFile) {
-		Path partFile = this.partsLocation.resolve("footer.L5X").normalize().toAbsolutePath();
-
-		try(FileWriter writer = new FileWriter(destinationFile.toString(), true))
-		{
-			try(FileReader reader = new FileReader(partFile.toString()))
-			{
-				int c;
-				while((c=reader.read())!=-1){
-					writer.write(c);
-				}
-			}
-			catch(IOException ex){
-				System.out.println(ex.getMessage());
-			}
 
 			writer.flush();
 		}
@@ -207,7 +141,6 @@ public class FileSystemStorageService implements StorageService {
 			}
 		}
 	}
-
 
 	@Override
 	public Stream<Path> loadAll() {
