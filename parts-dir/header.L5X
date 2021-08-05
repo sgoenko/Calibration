@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--Расчет объема по градуировочной таблице-->
+<RSLogix5000Content SchemaRevision="1.0" SoftwareRevision="19.00" TargetName="Calibration_Header" TargetType="AddOnInstructionDefinition" TargetRevision="1.0 " TargetLastEdited="2021-08-04T11:22:39.636Z" ContainsContext="true" Owner="XP, VM" ExportDate="Wed Aug 04 14:39:28 2021" ExportOptions="References DecoratedData Context Dependencies ForceProtectedEncoding AllProjDocTrans">
+<Controller Use="Context" Name="Calibr">
+<DataTypes Use="Context">
+</DataTypes>
+<AddOnInstructionDefinitions Use="Context">
+<AddOnInstructionDefinition Use="Target" Name="Calibration_Header" Revision="1.0" ExecutePrescan="false" ExecutePostscan="false" ExecuteEnableInFalse="false" CreatedDate="2021-07-31T17:04:58.556Z" CreatedBy="VM-396943105BDE\user" EditedDate="2021-08-04T11:22:39.636Z" EditedBy="VM-396943105BDE\user" SoftwareRevision="v19.00"
+>
+<Description>
+<![CDATA[Расчет объема по градуировочной таблице]]>
+</Description>

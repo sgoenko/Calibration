@@ -1,0 +1,126 @@
+<Routines>
+<Routine Name="Logic" Type="ST">
+<STContent>
+<Line Number="0">
+<![CDATA[]]>
+</Line>
+<Line Number="1">
+<![CDATA[case input_units of]]>
+</Line>
+<Line Number="2">
+<![CDATA[	0: level_mm := level_0 + (level_100 - level_0) * level / 100; 	// %]]>
+</Line>
+<Line Number="3">
+<![CDATA[	1: level_mm := level;											// mm]]>
+</Line>
+<Line Number="4">
+<![CDATA[	2: level_mm := level / 10;										// cm]]>
+</Line>
+<Line Number="5">
+<![CDATA[	3: level_mm := level / 100;										// m]]>
+</Line>
+<Line Number="6">
+<![CDATA[end_case;]]>
+</Line>
+<Line Number="7">
+<![CDATA[]]>
+</Line>
+<Line Number="8">
+<![CDATA[level_low := level_mm/10 - 0.5;]]>
+</Line>
+<Line Number="9">
+<![CDATA[delta := level_mm - level_low*10;]]>
+</Line>
+<Line Number="10">
+<![CDATA[level_high := level_low + 1;]]>
+</Line>
+<Line Number="11">
+<![CDATA[]]>
+</Line>
+<Line Number="12">
+<![CDATA[If level_low >= 0 and level_high <= max_index then]]>
+</Line>
+<Line Number="13">
+<![CDATA[	error := 0;]]>
+</Line>
+<Line Number="14">
+<![CDATA[end_if;]]>
+</Line>
+<Line Number="15">
+<![CDATA[]]>
+</Line>
+<Line Number="16">
+<![CDATA[If level_low < 0 then]]>
+</Line>
+<Line Number="17">
+<![CDATA[	level_low := 0;]]>
+</Line>
+<Line Number="18">
+<![CDATA[	error := 1;]]>
+</Line>
+<Line Number="19">
+<![CDATA[end_if;]]>
+</Line>
+<Line Number="20">
+<![CDATA[]]>
+</Line>
+<Line Number="21">
+<![CDATA[if level_low > max_index then]]>
+</Line>
+<Line Number="22">
+<![CDATA[	level_low := max_index;]]>
+</Line>
+<Line Number="23">
+<![CDATA[	error := 1;]]>
+</Line>
+<Line Number="24">
+<![CDATA[end_if;]]>
+</Line>
+<Line Number="25">
+<![CDATA[]]>
+</Line>
+<Line Number="26">
+<![CDATA[If level_high < 0 then]]>
+</Line>
+<Line Number="27">
+<![CDATA[	level_high := 0;]]>
+</Line>
+<Line Number="28">
+<![CDATA[	error := 1;]]>
+</Line>
+<Line Number="29">
+<![CDATA[end_if;]]>
+</Line>
+<Line Number="30">
+<![CDATA[]]>
+</Line>
+<Line Number="31">
+<![CDATA[if level_high > max_index then]]>
+</Line>
+<Line Number="32">
+<![CDATA[	level_high := max_index;]]>
+</Line>
+<Line Number="33">
+<![CDATA[	error := 1;]]>
+</Line>
+<Line Number="34">
+<![CDATA[end_if;]]>
+</Line>
+<Line Number="35">
+<![CDATA[]]>
+</Line>
+<Line Number="36">
+<![CDATA[volume_low := table[level_low];]]>
+</Line>
+<Line Number="37">
+<![CDATA[volume_high := table[level_high];]]>
+</Line>
+<Line Number="38">
+<![CDATA[volume := volume_low + (volume_high - volume_low) * delta / 10;]]>
+</Line>
+<Line Number="39">
+<![CDATA[]]>
+</Line>
+</STContent>
+</Routine>
+</Routines>

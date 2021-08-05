@@ -1,0 +1,30 @@
+<LocalTag Name="level_low" DataType="DINT" Radix="Decimal" ExternalAccess="None">
+<DefaultData Format="Decorated">
+<DataValue DataType="DINT" Radix="Decimal" Value="0"/>
+</DefaultData>
+</LocalTag>
+<LocalTag Name="level_high" DataType="DINT" Radix="Decimal" ExternalAccess="None">
+<DefaultData Format="Decorated">
+<DataValue DataType="DINT" Radix="Decimal" Value="0"/>
+</DefaultData>
+</LocalTag>
+<LocalTag Name="delta" DataType="DINT" Radix="Decimal" ExternalAccess="None">
+<DefaultData Format="Decorated">
+<DataValue DataType="DINT" Radix="Decimal" Value="0"/>
+</DefaultData>
+</LocalTag>
+<LocalTag Name="volume_high" DataType="REAL" Radix="Float" ExternalAccess="None">
+<DefaultData Format="Decorated">
+<DataValue DataType="REAL" Radix="Float" Value="0.0"/>
+</DefaultData>
+</LocalTag>
+<LocalTag Name="volume_low" DataType="REAL" Radix="Float" ExternalAccess="None">
+<DefaultData Format="Decorated">
+<DataValue DataType="REAL" Radix="Float" Value="0.0"/>
+</DefaultData>
+</LocalTag>
+<LocalTag Name="level_mm" DataType="REAL" Radix="Float" ExternalAccess="None">
+<DefaultData Format="Decorated">
+<DataValue DataType="REAL" Radix="Float" Value="0.0"/>
+</DefaultData>
+</LocalTag>
