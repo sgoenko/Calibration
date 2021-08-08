@@ -1,27 +1,32 @@
 <html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/css/bootstrap.css"/>
+    <script src="/js/bootstrap.js"></script>
+</head>
 <body>
 
-	<div th:if="${message}">
-		<h2 th:text="${message}"/>
-	</div>
+<div class="container" align="center">
+    <form method="POST" enctype="multipart/form-data" action="/">
 
-	<div>
-		<form method="POST" enctype="multipart/form-data" action="/">
-			<table>
+        <div>
+            <label class="form-label" for="file">Файл с калибровочной таблицей</label>
+            <input type="file" id="file" class="form-control" name="file" />
+        </div>
+        <div>
+            <input type="submit" class="btn btn-outline-secondary" value="Создать аддон"/>
+        </div>
 
-				<tr><td>Файл с калибровочной таблицей: </td><td><input type="file" name="file" /></td></tr>
-				<tr><td></td><td><input type="submit" value="Создать аддон" /></td></tr>
-			</table>
-		</form>
-	</div>
+    </form>
+</div>
 
-	<div>
-		<ul>
-			<li th:each="file : ${files}">
-				<a th:href="${file}" th:text="${file}" />
-			</li>
-		</ul>
-	</div>
+<div class="container" align="center">
+    <div class="form-check form-check-inline"
+         th:each="file : ${files}">
+        <a class="btn btn-outline-secondary" th:href="${file}" >
+            Ваш аддон
+        </a>
+    </div>
+</div>
 
 </body>
 </html>
