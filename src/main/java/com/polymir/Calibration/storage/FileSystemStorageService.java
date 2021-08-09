@@ -1,9 +1,6 @@
 package com.polymir.Calibration.storage;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,42 +42,45 @@ public class FileSystemStorageService implements StorageService {
 			e.printStackTrace();
 		}
 
-		appendPart(destinationFile, "header.L5X", false);
-		appendPart(destinationFile, "parameters.L5X", true);
+		String tankName = Paths.get(file.getOriginalFilename()).toString();
+
+		appendPart(destinationFile, Part.HEADER, tankName, false);
+		appendPart(destinationFile, Part.PARAMETERS, tankName,true);
 		appendLocalTags(destinationFile, graduateTable);
-		appendPart(destinationFile, "routines.L5X", true);
-		appendPart(destinationFile, "footer.L5X", true);
+		appendPart(destinationFile, Part.ROUTINES, tankName,true);
+		appendPart(destinationFile, Part.FOOTER, tankName,true);
 
 	}
 
-	private void appendPart(Path destinationFile, String partName, boolean append) {
-		Path partFile = this.partsLocation.resolve(partName).normalize().toAbsolutePath();
+	private void appendPart(Path destinationFile, Part part, String tankName, boolean append) {
+		Path partFile = this.partsLocation.resolve(part.value + ".L5X").normalize().toAbsolutePath();
 
-		try(FileWriter writer = new FileWriter(destinationFile.toString(), append))
-		{
-			try(FileReader reader = new FileReader(partFile.toString()))
-			{
-				int c;
-				while((c=reader.read())!=-1){
-					writer.write(c);
-				}
-			}
-			catch(IOException ex){
-				System.out.println(ex.getMessage());
+		File infile = new File(partFile.toString());
+		File outfile = new File(destinationFile.toString());
+
+		try {
+			FileInputStream instream = new FileInputStream(infile);
+			FileOutputStream outstream = new FileOutputStream(outfile, append);
+
+			byte[] buffer = new byte[1024];
+
+			int length;
+			while ((length = instream.read(buffer)) > 0) {
+				outstream.write(buffer, 0, length);
 			}
 
-			writer.flush();
-		}
-		catch(IOException ex){
-			System.out.println(ex.getMessage());
+			instream.close();
+			outstream.close();
+
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
 		}
 	}
 
 	private void appendLocalTags(Path destinationFile, List<Float> graduateTable) {
 		Path partFile = this.partsLocation.resolve("localTags.L5X").normalize().toAbsolutePath();
 
-		try(FileWriter writer = new FileWriter(destinationFile.toString(), true))
-		{
+		try (FileWriter writer = new FileWriter(destinationFile.toString(), true)) {
 			writer.write("<LocalTags>\n");
 
 			writer.write(String.format(
@@ -91,7 +91,7 @@ public class FileSystemStorageService implements StorageService {
 					"<Array DataType=\"REAL\" Dimensions=\"%d\" Radix=\"Float\">\n",
 					graduateTable.size()));
 
-			for (int i=0; i<graduateTable.size(); i++) {
+			for (int i = 0; i < graduateTable.size(); i++) {
 				String element = String.format("<Element Index=\"[%d]\" Value=\"%s\"/>\n", i, graduateTable.get(i).toString());
 				writer.write(element);
 			}
@@ -100,21 +100,18 @@ public class FileSystemStorageService implements StorageService {
 			writer.write("</DefaultData>\n");
 			writer.write("</LocalTag>\n");
 
-			try(FileReader reader = new FileReader(partFile.toString()))
-			{
+			try (FileReader reader = new FileReader(partFile.toString())) {
 				int c;
-				while((c=reader.read())!=-1){
+				while ((c = reader.read()) != -1) {
 					writer.write(c);
 				}
-			}
-			catch(IOException ex){
+			} catch (IOException ex) {
 				System.out.println(ex.getMessage());
 			}
 			writer.write("</LocalTags>\n");
 
 			writer.flush();
-		}
-		catch(IOException ex){
+		} catch (IOException ex) {
 			System.out.println(ex.getMessage());
 		}
 	}

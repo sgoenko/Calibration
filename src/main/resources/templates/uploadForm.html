@@ -1,7 +1,7 @@
 <html xmlns:th="https://www.thymeleaf.org">
 <head>
-    <link rel="stylesheet" href="/css/bootstrap.css"/>
-    <script src="/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <script src="/js/bootstrap.min.js"></script>
 </head>
 <body>
 
@@ -17,9 +17,7 @@
         </div>
 
     </form>
-</div>
 
-<div class="container" align="center">
     <div class="form-check form-check-inline"
          th:each="file : ${files}">
         <a class="btn btn-outline-secondary" th:href="${file}" >
