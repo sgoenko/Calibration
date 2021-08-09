@@ -58,23 +58,20 @@ public class FileSystemStorageService implements StorageService {
 		File infile = new File(partFile.toString());
 		File outfile = new File(destinationFile.toString());
 
-		try {
-			FileInputStream instream = new FileInputStream(infile);
-			FileOutputStream outstream = new FileOutputStream(outfile, append);
-
-			byte[] buffer = new byte[1024];
-
-			int length;
-			while ((length = instream.read(buffer)) > 0) {
-				outstream.write(buffer, 0, length);
-			}
-
-			instream.close();
-			outstream.close();
-
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
+		try (
+			InputStream in = new BufferedInputStream(new FileInputStream(infile));
+			OutputStream out = new BufferedOutputStream(new FileOutputStream(outfile, append))) {
+				byte[] buffer = new byte[1024];
+				int length;
+				while ((length = in.read(buffer)) > 0) {
+					out.write(buffer, 0, length);
+				}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+
 	}
 
 	private void appendLocalTags(Path destinationFile, List<Float> graduateTable) {
