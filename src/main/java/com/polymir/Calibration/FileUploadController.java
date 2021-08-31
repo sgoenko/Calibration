@@ -54,9 +54,10 @@ public class FileUploadController {
 
 	@PostMapping("/")
 	public String handleFileUpload(@RequestParam("file") MultipartFile file,
+								   @RequestParam("addon_name") String addonName,
 								   RedirectAttributes redirectAttributes) {
 
-		storageService.store(file);
+		storageService.store(file, addonName);
 		redirectAttributes.addFlashAttribute("message",
 				"Аддон для емкости " + file.getOriginalFilename() + " сформирован.");
 

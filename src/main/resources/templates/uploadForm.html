@@ -2,6 +2,7 @@
 <head>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
@@ -10,9 +11,11 @@
 
         <div>
             <label class="form-label" for="file">Файл с калибровочной таблицей</label>
-            <input type="file" id="file" class="form-control" name="file" />
+            <input type="file" onchange="setAddonName(this.value)" id="file" class="form-control"
+                   name="file"/>
         </div>
         <div>
+            <input type="text" placeholder="Имя аддона" id="addon_name" class="form-control" name="addon_name"/>
             <input type="submit" class="btn btn-outline-secondary" value="Создать аддон"/>
         </div>
 
@@ -20,11 +23,19 @@
 
     <div class="form-check form-check-inline"
          th:each="file : ${files}">
-        <a class="btn btn-outline-secondary" th:href="${file}" >
+        <a class="btn btn-outline-secondary" th:href="${file}">
             Ваш аддон
         </a>
     </div>
 </div>
 
 </body>
+
+<script>
+    function setAddonName(input) {
+        const addonName = 'Calibration_' + input.substring(input.lastIndexOf('\\') + 1);
+        $("#addon_name").val(addonName);
+    }
+</script>
+
 </html>

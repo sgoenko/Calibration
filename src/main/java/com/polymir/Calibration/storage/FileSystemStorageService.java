@@ -30,9 +30,8 @@ public class FileSystemStorageService implements StorageService {
 	}
 
 	@Override
-	public void store(MultipartFile file) {
-		Path destinationFile = this.rootLocation.resolve(
-				"Calibration_" + Paths.get(file.getOriginalFilename()) + ".L5X")
+	public void store(MultipartFile file, String addonName) {
+		Path destinationFile = this.rootLocation.resolve(addonName + ".L5X")
 				.normalize().toAbsolutePath();
 
 		List<Float> graduateTable = new ArrayList<>();
