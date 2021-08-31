@@ -44,34 +44,63 @@ public class FileSystemStorageService implements StorageService {
 
 		String tankName = Paths.get(file.getOriginalFilename()).toString();
 
-		appendPart(destinationFile, Part.HEADER, tankName, false);
-		appendPart(destinationFile, Part.PARAMETERS, tankName,true);
+		appendPart(destinationFile, Part.HEADER, false);
+		modifyFile(destinationFile, "Calibration_Header", "Calibration_" + tankName);
+		appendPart(destinationFile, Part.PARAMETERS, true);
 		appendLocalTags(destinationFile, graduateTable);
-		appendPart(destinationFile, Part.ROUTINES, tankName,true);
-		appendPart(destinationFile, Part.FOOTER, tankName,true);
+		appendPart(destinationFile, Part.ROUTINES, true);
+		appendPart(destinationFile, Part.FOOTER, true);
 
 	}
 
-	private void appendPart(Path destinationFile, Part part, String tankName, boolean append) {
+	private void appendPart(Path destinationFile, Part part, boolean append) {
 		Path partFile = this.partsLocation.resolve(part.value + ".L5X").normalize().toAbsolutePath();
 
 		File infile = new File(partFile.toString());
 		File outfile = new File(destinationFile.toString());
 
-		try (
-			InputStream in = new BufferedInputStream(new FileInputStream(infile));
-			OutputStream out = new BufferedOutputStream(new FileOutputStream(outfile, append))) {
-				byte[] buffer = new byte[1024];
-				int length;
-				while ((length = in.read(buffer)) > 0) {
-					out.write(buffer, 0, length);
-				}
+		try (InputStream in = new BufferedInputStream(new FileInputStream(infile));
+			 OutputStream out = new BufferedOutputStream(new FileOutputStream(outfile, append))) {
+			byte[] buffer = new byte[1024];
+			int length;
+			while ((length = in.read(buffer)) > 0) {
+				out.write(buffer, 0, length);
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
+	}
+
+	private void modifyFile(Path filePath, String oldString, String newString) {
+		File fileToBeModified = new File(filePath.toString());
+		String oldContent = "";
+		BufferedReader reader = null;
+		FileWriter writer = null;
+
+		try {
+			reader = new BufferedReader(new FileReader(fileToBeModified));
+			String line = reader.readLine();
+			while (line != null) {
+				oldContent = oldContent + line + System.lineSeparator();
+				line = reader.readLine();
+			}
+
+			String newContent = oldContent.replaceAll(oldString, newString);
+			writer = new FileWriter(fileToBeModified);
+			writer.write(newContent);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				reader.close();
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private void appendLocalTags(Path destinationFile, List<Float> graduateTable) {
