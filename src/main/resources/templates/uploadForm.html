@@ -1,4 +1,4 @@
-<html xmlns:th="https://www.thymeleaf.org">
+<html xmlns:th="https://www.thymeleaf.org" xmlns:color="http://www.w3.org/1999/xhtml">
 <head>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <script src="/js/bootstrap.min.js"></script>
@@ -20,12 +20,32 @@
         </div>
 
     </form>
-
+    <hr>
     <div class="form-check form-check-inline"
          th:each="file : ${files}">
+        <span style ="color: blue;" th:text="${message}">13 february 2011</span><br>
         <a class="btn btn-outline-secondary" th:href="${file}">
-            Ваш аддон
+            Скачать
         </a>
+        <hr>
+        Вызов:  <span style ="color: #c300ff; font-weight: bold;" th:text="${addon}">Calibration</span>
+        (<span style ="color: #436a06;" th:text="${addon}">Calibration</span>,
+        <span style ="color: #1580bd;">level, level_0, level_100, input_units, max_index,</span>
+        volume, error);
+        <hr>
+        level - входной сигнал
+        <br>
+        level_0 - значение в калибровочной таблице, соответствующее 0%
+        <br>
+        level_100 - значение в калибровочной таблице, соответствующее 100%
+        <br>
+        input_units - единицы измерения входгого сигнала (0-%, 1-мм, 2-см, 3-м)
+        <br>
+        max_index - количество строк в калибровочной таблице
+        <br>
+        volume - выходное значение объема в м3
+        <br>
+        error - признак ошибки (0 - нет, 1 - входное значение вне диапазона калибровочной таблицы)
     </div>
 </div>
 

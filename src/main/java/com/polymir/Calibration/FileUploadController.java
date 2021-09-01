@@ -40,6 +40,8 @@ public class FileUploadController {
 						"serveFile", path.getFileName().toString()).build().toUri().toString())
 				.collect(Collectors.toList()));
 
+//		model.addAttribute("addon", model.addonName);
+
 		return "uploadForm";
 	}
 
@@ -60,6 +62,7 @@ public class FileUploadController {
 		storageService.store(file, addonName);
 		redirectAttributes.addFlashAttribute("message",
 				"Аддон для емкости " + file.getOriginalFilename() + " сформирован.");
+		redirectAttributes.addFlashAttribute("addon", addonName);
 
 		return "redirect:/";
 	}
