@@ -34,13 +34,11 @@ public class FileUploadController {
 
 	@GetMapping("/")
 	public String listUploadedFiles(Model model) throws IOException {
-
-		model.addAttribute("files", storageService.loadAll().map(
-				path -> MvcUriComponentsBuilder.fromMethodName(FileUploadController.class,
+		model.addAttribute("files", storageService.loadAll()
+				.filter(path -> path.getFileName().toString().contains(model.getAttribute("addon").toString()))
+				.map(path -> MvcUriComponentsBuilder.fromMethodName(FileUploadController.class,
 						"serveFile", path.getFileName().toString()).build().toUri().toString())
 				.collect(Collectors.toList()));
-
-//		model.addAttribute("addon", model.addonName);
 
 		return "uploadForm";
 	}
