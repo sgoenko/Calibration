@@ -15,7 +15,8 @@
                    name="file"/>
         </div>
         <div>
-            <input type="text" onkeyup="validateAddonName()" placeholder="Имя аддона" id="addon_name" class="form-control" name="addon_name"/>
+            <input type="text" onkeyup="validateAddonName()" placeholder="Имя аддона" id="addon_name"
+                   class="form-control" name="addon_name"/>
             <input id="create" type="submit" class="btn btn-outline-secondary" value="Создать аддон"/>
         </div>
 
@@ -23,29 +24,34 @@
     <hr>
     <div class="form-check form-check-inline"
          th:each="file : ${files}">
-        <span style ="color: blue;" th:text="${message}">13 february 2011</span><br>
+        <span style="color: blue;" th:text="${message}">13 february 2011</span><br>
         <a class="btn btn-outline-secondary" th:href="${file}">
             Скачать
         </a>
         <hr>
-        Вызов:  <span style ="color: #c300ff; font-weight: bold;" th:text="${addon}">Calibration</span>
-        (<span style ="color: #436a06;" th:text="${addon}">Calibration</span>,
-        <span style ="color: #1580bd;">level, level_0, level_100, input_units, max_index,</span>
-        volume, error);
+        Вызов: <span style="color: #c300ff; font-weight: bold;" th:text="${addon}">Calibration</span>
+        (<span style="color: #436a06;" th:text="${addon}">Calibration</span>,
+        <span style="color: #1580bd;">level, level_0, level_100, input_units, max_index,</span>
+        <span style="color: #245a07;">volume</span>,
+        <span style="color: #bd1545;">error</span>
+        );
         <hr>
-        level - входной сигнал
-        <br>
-        level_0 - значение в калибровочной таблице, соответствующее 0%
-        <br>
-        level_100 - значение в калибровочной таблице, соответствующее 100%
-        <br>
-        input_units - единицы измерения входгого сигнала (0-%, 1-мм, 2-см, 3-м)
-        <br>
-        max_index - количество строк в калибровочной таблице
-        <br>
-        volume - выходное значение объема в м3
-        <br>
-        error - признак ошибки (0 - нет, 1 - входное значение вне диапазона калибровочной таблицы)
+        <div th:align="left">
+            <span style="color: #1580bd; font-weight: bold;">level</span> - входной сигнал
+            <br>
+            level_0 - значение в калибровочной таблице, соответствующее 0%
+            <br>
+            level_100 - значение в калибровочной таблице, соответствующее 100%
+            <br>
+            input_units - единицы измерения входгого сигнала (0-%, 1-мм, 2-см, 3-м)
+            <br>
+            max_index - количество строк в калибровочной таблице
+            <br>
+            <span style="color: #245a07; font-weight: bold;">volume</span> - выходное значение объема в м3
+            <br>
+            <span style="color: #bd1545; font-weight: bold;">error</span> - признак ошибки (0 - нет, 1 - входное значение
+            вне диапазона калибровочной таблицы)
+        </div>
     </div>
 </div>
 
@@ -56,31 +62,21 @@
         const addonName = 'Calibration_' + input.substring(input.lastIndexOf('\\') + 1);
         $("#addon_name").val(addonName);
 
-        if (addonName.length > 0) {
-            $("#create").show();
-        }
-        else {
-            $("#create").hide();
-        }
+        createManage(addonName);
     }
 
     $("#create").hide();
 
     function validateAddonName() {
         const addonName = $("#addon_name").val();
-        if (addonName.length > 0) {
-            $("#create").show();
-        }
-        else {
-            $("#create").hide();
-        }
+
+        createManage(addonName);
     }
 
-    function createManage(addomName) {
+    function createManage(addonName) {
         if (addonName.length > 0) {
             $("#create").show();
-        }
-        else {
+        } else {
             $("#create").hide();
         }
     }
