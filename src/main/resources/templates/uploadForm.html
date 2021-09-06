@@ -3,6 +3,7 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/fileinput.min.js"></script>
 </head>
 <body>
 
@@ -10,8 +11,7 @@
     <form method="POST" enctype="multipart/form-data" action="/">
 
         <div>
-            <label class="form-label" for="file">Файл с калибровочной таблицей</label>
-            <input type="file" onchange="setAddonName(this.value)" id="file" class="form-control"
+            <input type="file" onchange="setAddonName(this.value)" id="file" class="input-file"
                    name="file"/>
         </div>
         <div>
@@ -24,8 +24,8 @@
     <hr>
     <div class="form-check form-check-inline"
          th:each="file : ${files}">
-        <span style="color: blue;" th:text="${message}">13 february 2011</span><br>
-        <a class="btn btn-outline-secondary" th:href="${file}">
+        <span style="color: blue;" th:text="${message}"></span><br>
+        <a class="btn btn-outline-primary" th:href="${file}">
             Скачать
         </a>
         <hr>
@@ -58,23 +58,31 @@
 </body>
 
 <script>
+
+    $(function() {
+        $(".input-file").fileinput('<button class="btn btn-outline-secondary">Выберите файл с калибровочной таблицей</button>');
+        $("#create").hide();
+    });
+
     function setAddonName(input) {
-        const addonName = 'Calibration_' + input.substring(input.lastIndexOf('\\') + 1);
+        const tableName = input.substring(input.lastIndexOf('\\') + 1);
+        let addonName = '';
+        if (tableName.length > 0) {
+            addonName = 'Calibration_' + input.substring(input.lastIndexOf('\\') + 1);
+        }
+
         $("#addon_name").val(addonName);
-
-        createManage(addonName);
+        createButtonVisiblity(addonName);
     }
-
-    $("#create").hide();
 
     function validateAddonName() {
         const addonName = $("#addon_name").val();
-
-        createManage(addonName);
+        createButtonVisiblity(addonName);
     }
 
-    function createManage(addonName) {
-        if (addonName.length > 0) {
+    function createButtonVisiblity(addonName) {
+        const tableName = $("#file").val();
+        if (addonName.length > 0 && tableName.length > 0) {
             $("#create").show();
         } else {
             $("#create").hide();
