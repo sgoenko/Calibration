@@ -1,30 +1,100 @@
-<LocalTag Name="level_low" DataType="DINT" Radix="Decimal" ExternalAccess="None">
-<DefaultData Format="Decorated">
-<DataValue DataType="DINT" Radix="Decimal" Value="0"/>
+<LocalTag Name="Delta" DataType="REAL" Radix="Float" ExternalAccess="None">
+<Description>
+<![CDATA[Дробная часть входного значения уровня.]]>
+</Description>
+<DefaultData Format="L5K">
+<![CDATA[0.00000000e+000]]>
 </DefaultData>
-</LocalTag>
-<LocalTag Name="level_high" DataType="DINT" Radix="Decimal" ExternalAccess="None">
-<DefaultData Format="Decorated">
-<DataValue DataType="DINT" Radix="Decimal" Value="0"/>
-</DefaultData>
-</LocalTag>
-<LocalTag Name="delta" DataType="DINT" Radix="Decimal" ExternalAccess="None">
-<DefaultData Format="Decorated">
-<DataValue DataType="DINT" Radix="Decimal" Value="0"/>
-</DefaultData>
-</LocalTag>
-<LocalTag Name="volume_high" DataType="REAL" Radix="Float" ExternalAccess="None">
 <DefaultData Format="Decorated">
 <DataValue DataType="REAL" Radix="Float" Value="0.0"/>
 </DefaultData>
 </LocalTag>
-<LocalTag Name="volume_low" DataType="REAL" Radix="Float" ExternalAccess="None">
+<LocalTag Name="MAX_INDEX" DataType="DINT" Radix="Decimal" ExternalAccess="None">
+<Description>
+<![CDATA[Индекс последнего элемента в таблице Table.]]>
+</Description>
+<DefaultData Format="L5K">
+<![CDATA[330]]>
+</DefaultData>
+<DefaultData Format="Decorated">
+<DataValue DataType="DINT" Radix="Decimal" Value="330"/>
+</DefaultData>
+</LocalTag>
+<LocalTag Name="Level" DataType="REAL" Radix="Float" ExternalAccess="None">
+<Description>
+<![CDATA[Входное значение уровня, переведенное в те же единицы измерения, в которых составлена таблица Table.]]>
+</Description>
+<DefaultData Format="L5K">
+<![CDATA[0.00000000e+000]]>
+</DefaultData>
 <DefaultData Format="Decorated">
 <DataValue DataType="REAL" Radix="Float" Value="0.0"/>
 </DefaultData>
 </LocalTag>
-<LocalTag Name="level_mm" DataType="REAL" Radix="Float" ExternalAccess="None">
+<LocalTag Name="Level_0" DataType="REAL" Radix="Float" ExternalAccess="None">
+<Description>
+<![CDATA[Привязка уровнемера к емкости в таких же единицах измерения, что и параметр Level.]]>
+</Description>
+<DefaultData Format="L5K">
+<![CDATA[0.00000000e+000]]>
+</DefaultData>
 <DefaultData Format="Decorated">
 <DataValue DataType="REAL" Radix="Float" Value="0.0"/>
 </DefaultData>
 </LocalTag>
+<LocalTag Name="Level_100" DataType="REAL" Radix="Float" ExternalAccess="None">
+<Description>
+<![CDATA[Привязка уровнемера к емкости в таких же единицах измерения, что и параметр Level.]]>
+</Description>
+<DefaultData Format="L5K">
+<![CDATA[0.00000000e+000]]>
+</DefaultData>
+<DefaultData Format="Decorated">
+<DataValue DataType="REAL" Radix="Float" Value="0.0"/>
+</DefaultData>
+</LocalTag>
+<LocalTag Name="IndexL" DataType="DINT" Radix="Decimal" ExternalAccess="None">
+<Description>
+<![CDATA[Индекс применяется для выбора значения из калибровочной таблицы]]>
+</Description>
+<DefaultData Format="L5K">
+<![CDATA[0]]>
+</DefaultData>
+<DefaultData Format="Decorated">
+<DataValue DataType="DINT" Radix="Decimal" Value="0"/>
+</DefaultData>
+</LocalTag>
+<LocalTag Name="IndexH" DataType="DINT" Radix="Decimal" ExternalAccess="None">
+<Description>
+<![CDATA[Индекс применяется для выбора значения из калибровочной таблицы]]>
+</Description>
+<DefaultData Format="L5K">
+<![CDATA[0]]>
+</DefaultData>
+<DefaultData Format="Decorated">
+<DataValue DataType="DINT" Radix="Decimal" Value="0"/>
+</DefaultData>
+</LocalTag>
+<LocalTag Name="UNITS" DataType="DINT" Radix="Decimal" ExternalAccess="None">
+<Description>
+<![CDATA[Единицы измерения уровня, применяемые в калибровочной таблице Table (1-мм, 2-см, 4-м)]]>
+</Description>
+<Comments>
+<Comment Operand=".0">
+<![CDATA[Level в мм]]>
+</Comment>
+<Comment Operand=".1">
+<![CDATA[Level в см]]>
+</Comment>
+<Comment Operand=".2">
+<![CDATA[Level в м]]>
+</Comment>
+</Comments>
+<DefaultData Format="L5K">
+<![CDATA[2]]>
+</DefaultData>
+<DefaultData Format="Decorated">
+<DataValue DataType="DINT" Radix="Decimal" Value="2"/>
+</DefaultData>
+</LocalTag>
+
