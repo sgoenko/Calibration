@@ -5,9 +5,8 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +44,13 @@ public class FileSystemStorageService implements StorageService {
 
 		appendPart(destinationFile, Part.HEADER, false);
 		modifyFile(destinationFile, "Calibration_Header", "Calibration_" + tankName);
+		SimpleDateFormat formatter = new SimpleDateFormat(
+				"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+		formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+		String creationDate = formatter.format(new Date());
+		modifyFile(destinationFile, "Calibration_Date", creationDate);
+		modifyFile(destinationFile, "Logix_Version", "v19");
+
 		appendPart(destinationFile, Part.PARAMETERS, true);
 		appendLocalTags(destinationFile, graduateTable);
 		appendPart(destinationFile, Part.ROUTINES, true);
@@ -103,14 +109,19 @@ public class FileSystemStorageService implements StorageService {
 	}
 
 	private void appendLocalTags(Path destinationFile, List<Float> graduateTable) {
-		Path partFile = this.partsLocation.resolve("localTags.L5X").normalize().toAbsolutePath();
+		Path partFile = this.partsLocation.resolve(Part.LOCAL_TAGS.value + ".L5X").normalize().toAbsolutePath();
 
 		try (FileWriter writer = new FileWriter(destinationFile.toString(), true)) {
 			writer.write("<LocalTags>\n");
 
 			writer.write(String.format(
-					"<LocalTag Name=\"table\" DataType=\"REAL\" Dimensions=\"%d\" Radix=\"Float\" ExternalAccess=\"None\">\n",
+					"<LocalTag Name=\"Table\" DataType=\"REAL\" Dimensions=\"%d\" Radix=\"Float\" ExternalAccess=\"None\">\n",
 					graduateTable.size()));
+
+			writer.write("<Description>\n");
+			writer.write("<![CDATA[Таблица значений объема продукта в емкости (м3). Интервал значений соответствует UNITS.]]>\n");
+			writer.write("</Description>\n");
+
 			writer.write("<DefaultData Format=\"Decorated\">\n");
 			writer.write(String.format(
 					"<Array DataType=\"REAL\" Dimensions=\"%d\" Radix=\"Float\">\n",
@@ -150,6 +161,7 @@ public class FileSystemStorageService implements StorageService {
 			while (sc.hasNextLine()) {
 				String line = sc.nextLine();
 				line = line.replaceAll(",", ".");
+//				String s = Integer.toHexString(Float.floatToIntBits(Float.parseFloat(line))).toUpperCase();
 				graduateTable.add(Float.parseFloat(line));
 			}
 		} catch (Exception e) {

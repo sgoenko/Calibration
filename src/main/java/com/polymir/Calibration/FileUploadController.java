@@ -61,6 +61,7 @@ public class FileUploadController {
 	@PostMapping("/")
 	public String handleFileUpload(@RequestParam("file") MultipartFile file,
 								   @RequestParam("addon_name") String addonName,
+								   @RequestParam("version") String version,
 								   RedirectAttributes redirectAttributes) {
 
 		storageService.store(file, addonName);
