@@ -29,37 +29,37 @@ public class FileSystemStorageService implements StorageService {
 	}
 
 	@Override
-	public void store(MultipartFile file, String addonName) {
+	public void store(MultipartFile file, String addonName, String version) {
 		Path destinationFile = this.rootLocation.resolve(addonName + ".L5X")
 				.normalize().toAbsolutePath();
 
 		List<Float> graduateTable = new ArrayList<>();
 		try {
-			buildGradueteTable(file, graduateTable);
+			buildGraduateTable(file, graduateTable);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		String tankName = Paths.get(file.getOriginalFilename()).toString();
+		String tankName = Paths.get(Objects.requireNonNull(file.getOriginalFilename())).toString();
 
-		appendPart(destinationFile, Part.HEADER, false);
+		appendPart(version, destinationFile, Part.HEADER, false);
 		modifyFile(destinationFile, "Calibration_Header", "Calibration_" + tankName);
 		SimpleDateFormat formatter = new SimpleDateFormat(
 				"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
 		formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 		String creationDate = formatter.format(new Date());
 		modifyFile(destinationFile, "Calibration_Date", creationDate);
-		modifyFile(destinationFile, "Logix_Version", "v19");
+		modifyFile(destinationFile, "Logix_Version", "v" + version);
 
-		appendPart(destinationFile, Part.PARAMETERS, true);
-		appendLocalTags(destinationFile, graduateTable);
-		appendPart(destinationFile, Part.ROUTINES, true);
-		appendPart(destinationFile, Part.FOOTER, true);
+		appendPart(version, destinationFile, Part.PARAMETERS, true);
+		appendLocalTags(version, destinationFile, graduateTable);
+		appendPart(version, destinationFile, Part.ROUTINES, true);
+		appendPart(version, destinationFile, Part.FOOTER, true);
 
 	}
 
-	private void appendPart(Path destinationFile, Part part, boolean append) {
-		Path partFile = this.partsLocation.resolve(part.value + ".L5X").normalize().toAbsolutePath();
+	private void appendPart(String version, Path destinationFile, Part part, boolean append) {
+		Path partFile = this.partsLocation.resolve(version + "\\" + part.value + ".L5X").normalize().toAbsolutePath();
 
 		File infile = new File(partFile.toString());
 		File outfile = new File(destinationFile.toString());
@@ -71,8 +71,6 @@ public class FileSystemStorageService implements StorageService {
 			while ((length = in.read(buffer)) > 0) {
 				out.write(buffer, 0, length);
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -81,7 +79,7 @@ public class FileSystemStorageService implements StorageService {
 
 	private void modifyFile(Path filePath, String oldString, String newString) {
 		File fileToBeModified = new File(filePath.toString());
-		String oldContent = "";
+		StringBuilder oldContent = new StringBuilder();
 		BufferedReader reader = null;
 		FileWriter writer = null;
 
@@ -89,18 +87,20 @@ public class FileSystemStorageService implements StorageService {
 			reader = new BufferedReader(new FileReader(fileToBeModified));
 			String line = reader.readLine();
 			while (line != null) {
-				oldContent = oldContent + line + System.lineSeparator();
+				oldContent.append(line).append(System.lineSeparator());
 				line = reader.readLine();
 			}
 
-			String newContent = oldContent.replaceAll(oldString, newString);
+			String newContent = oldContent.toString().replaceAll(oldString, newString);
 			writer = new FileWriter(fileToBeModified);
 			writer.write(newContent);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			try {
+				assert reader != null;
 				reader.close();
+				assert writer != null;
 				writer.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -108,8 +108,8 @@ public class FileSystemStorageService implements StorageService {
 		}
 	}
 
-	private void appendLocalTags(Path destinationFile, List<Float> graduateTable) {
-		Path partFile = this.partsLocation.resolve(Part.LOCAL_TAGS.value + ".L5X").normalize().toAbsolutePath();
+	private void appendLocalTags(String version, Path destinationFile, List<Float> graduateTable) {
+		Path partFile = this.partsLocation.resolve(version + "\\" + Part.LOCAL_TAGS.value + ".L5X").normalize().toAbsolutePath();
 
 		try (FileWriter writer = new FileWriter(destinationFile.toString(), true)) {
 			writer.write("<LocalTags>\n");
@@ -152,12 +152,8 @@ public class FileSystemStorageService implements StorageService {
 		}
 	}
 
-	private void buildGradueteTable(MultipartFile file, List<Float> graduateTable) throws IOException {
-		InputStream inputStream = null;
-		Scanner sc = null;
-		try {
-			inputStream = file.getInputStream();
-			sc = new Scanner(inputStream, "UTF-8");
+	private void buildGraduateTable(MultipartFile file, List<Float> graduateTable) throws IOException {
+		try (InputStream inputStream = file.getInputStream(); Scanner sc = new Scanner(inputStream, "UTF-8")) {
 			while (sc.hasNextLine()) {
 				String line = sc.nextLine();
 				line = line.replaceAll(",", ".");
@@ -166,13 +162,6 @@ public class FileSystemStorageService implements StorageService {
 			}
 		} catch (Exception e) {
 			throw new StorageException("Failed to store file.", e);
-		} finally {
-			if (inputStream != null) {
-				inputStream.close();
-			}
-			if (sc != null) {
-				sc.close();
-			}
 		}
 	}
 

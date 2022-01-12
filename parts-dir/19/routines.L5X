@@ -1,0 +1,54 @@
+<Routines>
+<Routine Name="Logic" Type="RLL">
+<RLLContent>
+<Rung Number="0" Type="N">
+<Comment>
+<![CDATA[Приведение в соответствие единиц измерения входного параметра к принятым внутри Addon]]>
+</Comment>
+<Text>
+<![CDATA[NEQ(ILevelUnits,UNITS)[XIC(ILevelUnits.0) [XIC(UNITS.1) MUL(ILevel,0.1,Level) ,XIC(UNITS.2) MUL(ILevel,0.001,Level) ] ,XIC(ILevelUnits.1) [XIC(UNITS.0) MUL(ILevel,10,Level) ,XIC(UNITS.2) MUL(ILevel,0.01,Level) ] ,XIC(ILevelUnits.2) [XIC(UNITS.0) MUL(ILevel,1000,Level) ,XIC(UNITS.1) MUL(ILevel,100,Level) ] ];]]>
+</Text>
+</Rung>
+<Rung Number="1" Type="N">
+<Text>
+<![CDATA[EQU(ILevelUnits,UNITS)MOV(ILevel,Level);]]>
+</Text>
+</Rung>
+<Rung Number="2" Type="N">
+<Comment>
+<![CDATA[Для случая, когда входное значение уровня задано в % необходимо с учетом привязки вычислить соответствующее значение уровня в единицах UNITS.]]>
+</Comment>
+<Text>
+<![CDATA[EQU(ILevelUnits,0)[NEQ(ILevel_0_100_Units,UNITS) [XIC(ILevel_0_100_Units.0) [XIC(UNITS.1) [MUL(ILevel_0,0.1,Level_0) ,MUL(ILevel_100,0.1,Level_100) ] ,XIC(UNITS.2) [MUL(ILevel_0,0.001,Level_0) ,MUL(ILevel_100,0.001,Level_100) ] ] ,XIC(ILevel_0_100_Units.1) [XIC(UNITS.0) [MUL(ILevel_0,10,Level_0) ,MUL(ILevel_100,10,Level_100) ] ,XIC(UNITS.2) [MUL(ILevel_0,0.01,Level_0) ,MUL(ILevel_100,0.01,Level_100) ] ] ,XIC(ILevel_0_100_Units.2) [XIC(UNITS.0) [MUL(ILevel_0,1000,Level_0) ,MUL(ILevel_100,1000,Level_100) ] ,XIC(UNITS.1) [MUL(ILevel_0,100,Level_0) ,MUL(ILevel_100,100,Level_100) ] ] ] ,EQU(ILevel_0_100_Units,UNITS) [MOV(ILevel_0,Level_0) ,MOV(ILevel_100,Level_100) ] ,CPT(Level,(Level_100-Level_0)*ILevel/100+Level_0) ];]]>
+</Text>
+</Rung>
+<Rung Number="3" Type="N">
+<Comment>
+<![CDATA[Входные значения уровня и привязок уровнемера теперь в тех же единицах измерения, что и индексы калибровочной таблицы.
+Меньший индекс IndexL равен целой части от входного значения Level.
+Больший индекс IndexH - на 1 больше, чем IndexL.
+Delta - дробная часть от входного значения уровня (необходима для случаев, когда значение уровня не равно точно индексам калибровочной таблицы).
+]]>
+</Comment>
+<Text>
+<![CDATA[[MOV(Level,IndexL) ,SUB(Level,IndexL,Delta) ,LEQ(Delta,0) [SUB(IndexL,1,IndexL) ,SUB(Level,IndexL,Delta) ] ,ADD(IndexL,1,IndexH) ];]]>
+</Text>
+</Rung>
+<Rung Number="4" Type="N">
+<Text>
+<![CDATA[[LIM(MAX_INDEX,IndexL,0) ,LIM(MAX_INDEX,IndexH,0) ,EQU(ILevelUnits,0) LIM(MAX_INDEX,Level_0,0) ]OTE(OError);]]>
+</Text>
+</Rung>
+<Rung Number="5" Type="N">
+<Text>
+<![CDATA[XIC(OError)[LIM(MAX_INDEX,IndexL,0) [GRT(IndexL,MAX_INDEX) MOV(MAX_INDEX,IndexL) ,LES(IndexL,0) MOV(0,IndexL) ] ,LIM(MAX_INDEX,IndexH,0) [GRT(IndexH,MAX_INDEX) MOV(MAX_INDEX,IndexH) ,LES(IndexH,0) MOV(0,IndexH) ] ];]]>
+</Text>
+</Rung>
+<Rung Number="6" Type="N">
+<Text>
+<![CDATA[[CPT(OTotalVolume,(Table[IndexH]-Table[IndexL])*Delta+Table[IndexL]) ,LIM(0,Level_0,MAX_INDEX) [MOV(Level_0,IndexL) ,SUB(OTotalVolume,Table[IndexL],OVolume) ] ];]]>
+</Text>
+</Rung>
+</RLLContent>
+</Routine>
+</Routines>
