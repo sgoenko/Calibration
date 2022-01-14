@@ -22,6 +22,9 @@ public class FileSystemStorageService implements StorageService {
 	private final Path rootLocation;
 	private final Path partsLocation;
 
+	private final List<Float> graduateTable19 = new ArrayList<>();
+	private final List<String> graduateTable16 = new ArrayList<>();
+
 	@Autowired
 	public FileSystemStorageService(StorageProperties properties) {
 		this.rootLocation = Paths.get(properties.getLocation());
@@ -33,9 +36,7 @@ public class FileSystemStorageService implements StorageService {
 		Path destinationFile = this.rootLocation.resolve(addonName + ".L5X")
 				.normalize().toAbsolutePath();
 
-		List<Float> graduateTable19 = new ArrayList<>();
-		List<String> graduateTable16 = new ArrayList<>();
-		fillGraduateTable(file, version, graduateTable19, graduateTable16);
+		fillGraduateTable(file, version);
 
 		String tankName = Paths.get(Objects.requireNonNull(file.getOriginalFilename())).toString();
 
@@ -49,13 +50,13 @@ public class FileSystemStorageService implements StorageService {
 		modifyFile(destinationFile, "Logix_Version", "v" + version);
 
 		appendPart(version, destinationFile, Part.PARAMETERS, true);
-		appendLocalTags(version, destinationFile, graduateTable16, graduateTable19);
+		appendLocalTags(version, destinationFile);
 		appendPart(version, destinationFile, Part.ROUTINES, true);
 		appendPart(version, destinationFile, Part.FOOTER, true);
 
 	}
 
-	private void fillGraduateTable(MultipartFile file, String version, List<Float> graduateTable19, List<String> graduateTable16) {
+	private void fillGraduateTable(MultipartFile file, String version) {
 		try {
 			if (version.equals("19")) {
 				buildGraduateTable19(file, graduateTable19);
@@ -117,63 +118,73 @@ public class FileSystemStorageService implements StorageService {
 		}
 	}
 
-	private void appendLocalTags(String version, Path destinationFile, List<String> graduateTable16, List<Float> graduateTable19) {
+	private void appendLocalTags(String version, Path destinationFile) {
 		Path partFile = this.partsLocation.resolve(version + "\\" + Part.LOCAL_TAGS.value + ".L5X").normalize().toAbsolutePath();
 
 		try (FileWriter writer = new FileWriter(destinationFile.toString(), true)) {
 			writer.write("<LocalTags>\n");
 
-			if (version.equals("19")) {
-				writer.write(String.format(
-						"<LocalTag Name=\"Table\" DataType=\"REAL\" Dimensions=\"%d\" Radix=\"Float\" ExternalAccess=\"None\">\n",
-						graduateTable19.size()));
-			} else if (version.equals("16")) {
-				writer.write(String.format(
-						"<LocalTag Name=\"Table1\" DataType=\"REAL\" Dimensions=\"%d\" Radix=\"Float\">\n",
-						graduateTable16.size()));
-			}
-			writer.write("<Description>\n");
-			writer.write("<![CDATA[Таблица значений объема продукта в емкости (м3). Интервал значений соответствует UNITS.]]>\n");
-			writer.write("</Description>\n");
+			addTableTag(version, writer);
+			addTableContent(version, writer);
+			addOtherTags(partFile, writer);
 
-			if (version.equals("19")) {
-				writer.write("<DefaultData Format=\"Decorated\">\n");
-				writer.write(String.format(
-						"<Array DataType=\"REAL\" Dimensions=\"%d\" Radix=\"Float\">\n",
-						graduateTable19.size()));
-
-				for (int i = 0; i < graduateTable19.size(); i++) {
-					String element = String.format("<Element Index=\"[%d]\" Value=\"%s\"/>\n", i, graduateTable19.get(i).toString());
-					writer.write(element);
-				}
-				writer.write("</Array>\n");
-			} else if (version.equals("16")) {
-				writer.write("<DefaultData>");
-				int inLine = 0;
-				for (String s : graduateTable16) {
-					writer.write(s + " ");
-					inLine ++;
-					if (inLine == 4) {
-						inLine = 0;
-						writer.write("\n");
-					}
-				}
-			}
-
-			writer.write("</DefaultData>\n");
-			writer.write("</LocalTag>\n");
-
-			try (FileReader reader = new FileReader(partFile.toString())) {
-				int c;
-				while ((c = reader.read()) != -1) {
-					writer.write(c);
-				}
-			} catch (IOException ex) {
-				System.out.println(ex.getMessage());
-			}
 			writer.write("</LocalTags>\n");
 
 			writer.flush();
+		} catch (IOException ex) {
+			System.out.println(ex.getMessage());
+		}
+	}
+
+	private void addTableTag(String version, FileWriter writer) throws IOException {
+		if (version.equals("19")) {
+			writer.write(String.format(
+					"<LocalTag Name=\"Table\" DataType=\"REAL\" Dimensions=\"%d\" Radix=\"Float\" ExternalAccess=\"None\">\n",
+					graduateTable19.size()));
+		} else if (version.equals("16")) {
+			writer.write(String.format(
+					"<LocalTag Name=\"Table1\" DataType=\"REAL\" Dimensions=\"%d\" Radix=\"Float\">\n",
+					graduateTable16.size()));
+		}
+		writer.write("<Description>\n");
+		writer.write("<![CDATA[Таблица значений объема продукта в емкости (м3). Интервал значений соответствует UNITS.]]>\n");
+		writer.write("</Description>\n");
+	}
+
+	private void addTableContent(String version, FileWriter writer) throws IOException {
+		if (version.equals("19")) {
+			writer.write("<DefaultData Format=\"Decorated\">\n");
+			writer.write(String.format(
+					"<Array DataType=\"REAL\" Dimensions=\"%d\" Radix=\"Float\">\n",
+					graduateTable19.size()));
+
+			for (int i = 0; i < graduateTable19.size(); i++) {
+				String element = String.format("<Element Index=\"[%d]\" Value=\"%s\"/>\n", i, graduateTable19.get(i).toString());
+				writer.write(element);
+			}
+			writer.write("</Array>\n");
+		} else if (version.equals("16")) {
+			writer.write("<DefaultData>");
+			int inLine = 0;
+			for (String s : graduateTable16) {
+				writer.write(s + " ");
+				inLine++;
+				if (inLine == 4) {
+					inLine = 0;
+					writer.write("\n");
+				}
+			}
+		}
+		writer.write("</DefaultData>\n");
+		writer.write("</LocalTag>\n");
+	}
+
+	private void addOtherTags(Path partFile, FileWriter writer) {
+		try (FileReader reader = new FileReader(partFile.toString())) {
+			int c;
+			while ((c = reader.read()) != -1) {
+				writer.write(c);
+			}
 		} catch (IOException ex) {
 			System.out.println(ex.getMessage());
 		}
