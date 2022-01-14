@@ -14,7 +14,7 @@
 <![CDATA[EQU(ILevelUnits,UNITS)MOV(ILevel,Level);]]>
 </Text>
 </Rung>
-<Rung Number="2" Type="N">
+<Rung Number="2" Type="e">
 <Comment>
 <![CDATA[Для случая, когда входное значение уровня задано в % необходимо с учетом привязки вычислить соответствующее значение уровня в единицах UNITS.]]>
 </Comment>
@@ -31,22 +31,22 @@ Delta - дробная часть от входного значения уро�
 ]]>
 </Comment>
 <Text>
-<![CDATA[[MOV(Level,IndexL) ,SUB(Level,IndexL,Delta) ,LEQ(Delta,0) [SUB(IndexL,1,IndexL) ,SUB(Level,IndexL,Delta) ] ,ADD(IndexL,1,IndexH) ];]]>
+<![CDATA[[MOV(Level,IndexL) ,SUB(Level,IndexL,delta) ,LEQ(delta,0) [SUB(IndexL,1,IndexL) ,SUB(Level,IndexL,delta) ] ,ADD(IndexL,1,IndexH) ];]]>
 </Text>
 </Rung>
-<Rung Number="4" Type="N">
+<Rung Number="4" Type="e">
 <Text>
-<![CDATA[[LIM(MAX_INDEX,IndexL,0) ,LIM(MAX_INDEX,IndexH,0) ,EQU(ILevelUnits,0) LIM(MAX_INDEX,Level_0,0) ]OTE(OError);]]>
+<![CDATA[[LIM(MAX_INDEX,IndexH,0) ,LIM(MAX_INDEX,IndexL,0) ,EQU(ILevelUnits,0) LIM(MAX_INDEX,Level_0,0) ]OTE(OError);]]>
 </Text>
 </Rung>
-<Rung Number="5" Type="N">
+<Rung Number="5" Type="e">
 <Text>
 <![CDATA[XIC(OError)[LIM(MAX_INDEX,IndexL,0) [GRT(IndexL,MAX_INDEX) MOV(MAX_INDEX,IndexL) ,LES(IndexL,0) MOV(0,IndexL) ] ,LIM(MAX_INDEX,IndexH,0) [GRT(IndexH,MAX_INDEX) MOV(MAX_INDEX,IndexH) ,LES(IndexH,0) MOV(0,IndexH) ] ];]]>
 </Text>
 </Rung>
-<Rung Number="6" Type="N">
+<Rung Number="6" Type="e">
 <Text>
-<![CDATA[[CPT(OTotalVolume,(Table[IndexH]-Table[IndexL])*Delta+Table[IndexL]) ,LIM(0,Level_0,MAX_INDEX) [MOV(Level_0,IndexL) ,SUB(OTotalVolume,Table[IndexL],OVolume) ] ];]]>
+<![CDATA[[CPT(OTotalVolume,(Table[IndexH]-Table[IndexL])*delta+Table[IndexL]) ,LIM(0,Level_0,MAX_INDEX) [MOV(Level_0,IndexL) ,SUB(OTotalVolume,Table[IndexL],OVolume) ] ];]]>
 </Text>
 </Rung>
 </RLLContent>
